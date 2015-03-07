@@ -1,0 +1,35 @@
+{
+  "name": "react-zeroclipboard-mixin",
+  "version": "0.1.0",
+  "description": "React mixin for automatic binding of the ZeroClipboard client to the clipboard action DOM elements",
+  "main": "./zeroclipboard-mixin.js",
+  "scripts": {
+    "build": "npm run bundle && npm run minify",
+    "bundle": "browserify zeroclipboard-mixin.js --standalone ReactZeroClipboardMixin -o dist/zeroclipboard-mixin.bundle.js",
+    "minify": "uglifyjs dist/zeroclipboard-mixin.bundle.js --source-map dist/zeroclipboard-mixin.bundle.js.map > dist/zeroclipboard-mixin.bundle.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wizardzloy/react-zeroclipboard-mixin.git"
+  },
+  "keywords": [
+    "react",
+    "mixin",
+    "zeroclipboard",
+    "clipboard",
+    "browser"
+  ],
+  "author": "Vladimir Guguiev <wizardzloy@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wizardzloy/react-zeroclipboard-mixin/issues"
+  },
+  "homepage": "https://github.com/wizardzloy/react-zeroclipboard-mixin",
+  "dependencies": {
+    "zeroclipboard": "^2.2.0"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.3",
+    "uglify-js": "^2.4.16"
+  }
+}

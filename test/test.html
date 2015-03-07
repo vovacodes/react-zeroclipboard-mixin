@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://fb.me/react-0.12.2.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+    <script src="../dist/zeroclipboard-mixin.bundle.min.js"></script>
+</head>
+<body>
+<script type="text/jsx">
+
+    window.ReactZeroClipboardMixin.ZeroClipboard.config({
+        swfPath: 'http://rawgit.com/zeroclipboard/zeroclipboard/master/dist/ZeroClipboard.swf'
+    });
+
+    var ZeroClipboardMixin = window.ReactZeroClipboardMixin;
+
+    var MyCopyButton = React.createClass({
+
+        zeroclipboardElementsSelector: '[data-zeroclipboard-copy-btn]',
+
+        mixins: [ ZeroClipboardMixin ],
+
+        render: function() {
+            return (
+               <div>
+                   <button data-zeroclipboard-copy-btn data-clipboard-text="Text to copy">Copy</button>
+                   <div><textarea placeholder="Paste here"></textarea></div>
+               </div>
+            );
+        }
+
+    });
+
+    React.render(<MyCopyButton/>, document.body)
+</script>
+
+</body>
+</html>
