@@ -12,7 +12,7 @@ React mixin for automatic binding of the ZeroClipboard client to the clipboard a
 
 ## Demo
 
-Demo availabe on [here](http://wizardzloy.github.io/react-zeroclipboard-mixin/)
+Demo is available [here](http://wizardzloy.github.io/react-zeroclipboard-mixin/)
 
 ## Usage
 
