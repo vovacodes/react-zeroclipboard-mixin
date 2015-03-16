@@ -1,5 +1,6 @@
 # react-zeroclipboard-mixin
 
+[![npm version](https://badge.fury.io/js/react-zeroclipboard-mixin.svg)](http://badge.fury.io/js/react-zeroclipboard-mixin)
 [![Dependency Status](https://david-dm.org/wizardzloy/react-zeroclipboard-mixin.svg)](https://david-dm.org/wizardzloy/react-zeroclipboard-mixin)
 [![Dev Dependency Status](https://david-dm.org/wizardzloy/react-zeroclipboard-mixin/dev-status.svg)](https://david-dm.org/wizardzloy/react-zeroclipboard-mixin)
 
@@ -8,6 +9,10 @@ React mixin for automatic binding of the ZeroClipboard client to the clipboard a
 ## Installation
 
 ```npm install --save react-zeroclipboard-mixin```
+
+## Demo
+
+Demo availabe on [here](http://wizardzloy.github.io/react-zeroclipboard-mixin/)
 
 ## Usage
 
