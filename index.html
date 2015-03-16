@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>react-zeroclipboard-mixin demo page</title>
+
+    <link rel="stylesheet" href="style.css"/>
+
+    <script src="http://fb.me/react-0.12.2.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+    <script src="http://rawgit.com/wizardzloy/react-zeroclipboard-mixin/master/dist/zeroclipboard-mixin.bundle.js"></script>
+</head>
+<body>
+    <main id="app">
+        <h1>
+            <a target="_blank" href="https://github.com/wizardzloy/react-zeroclipboard-mixin">
+                react-zeroclipboard-mixin
+                <img class="github-icon" src="./GitHub-Mark-120px-plus.png"/>
+            </a>
+            demo page
+        </h1>
+
+        <div id="input-container"></div>
+        <div id="output-container">
+            <textarea rows="4" placeholder="Paste here"></textarea>
+        </div>
+
+        <h3>Here is the code of the React component used in the example above</h3>
+
+        <script class="code" type="text/jsx">
+            window.ReactZeroClipboardMixin.ZeroClipboard.config({
+                swfPath: 'http://rawgit.com/zeroclipboard/zeroclipboard/master/dist/ZeroClipboard.swf'
+            });
+
+            var ZeroClipboardMixin = window.ReactZeroClipboardMixin;
+
+            var MyCopyInput = React.createClass({
+
+                zeroclipboardElementsSelector: '[data-zeroclipboard-copy-btn]',
+
+                mixins: [ ZeroClipboardMixin ],
+
+                render: function() {
+                    return (
+                        <div>
+                            <input id="input-to-copy" placeholder="Type text to copy here..." type="text"/>
+                            <button data-zeroclipboard-copy-btn data-clipboard-target="input-to-copy">Copy</button>
+                        </div>
+                    );
+                }
+
+            });
+
+            React.render(<MyCopyInput/>, document.getElementById('input-container'));
+        </script>
+    </main>
+</body>
+</html>
