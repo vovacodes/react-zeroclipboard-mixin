@@ -1,6 +1,6 @@
 {
   "name": "react-zeroclipboard-mixin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React mixin for automatic binding of the ZeroClipboard client to the clipboard action DOM elements",
   "main": "./zeroclipboard-mixin.js",
   "scripts": {
