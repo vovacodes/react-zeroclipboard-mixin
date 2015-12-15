@@ -3,12 +3,16 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script src="http://fb.me/react-0.12.2.js"></script>
-    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
-    <script src="../dist/zeroclipboard-mixin.bundle.min.js"></script>
+    <script type="text/javascript" src="/dist/zero.js"></script>
+    <script src="/bower_components/react/react.js"></script>
+
+    <script src="/bower_components/react/react-dom.js"></script>
+
+    <script type="text/javascript" src="/bower_components/babel/browser.js"></script>
+    <script src="/dist/zeroclipboard-mixin.bundle.js"></script>
 </head>
 <body>
-<script type="text/jsx">
+<script type="text/babel">
 
     window.ReactZeroClipboardMixin.ZeroClipboard.config({
         swfPath: 'http://rawgit.com/zeroclipboard/zeroclipboard/master/dist/ZeroClipboard.swf'
@@ -33,7 +37,7 @@
 
     });
 
-    React.render(<MyCopyButton/>, document.body)
+    ReactDOM.render(<MyCopyButton/>, document.body)
 </script>
 
 </body>

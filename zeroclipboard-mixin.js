@@ -7,11 +7,13 @@ var ZeroClipboardMixin = {
   componentDidMount: function componentDidMount() {
     var zeroclipboardElementsSelector = this.zeroclipboardElementsSelector || '[data-zeroclipboard-copy-btn]';
     this.clipboardClient = new ZeroClipboard();
-    this.clipboardClient.clip(this.getDOMNode().querySelectorAll(zeroclipboardElementsSelector));
+    var node = ReactDOM.findDOMNode(this);
+    this.clipboardClient.clip(node.querySelectorAll(zeroclipboardElementsSelector));
   },
   componentDidUpdate: function componentDidUpdate() {
     var zeroclipboardElementsSelector = this.zeroclipboardElementsSelector || '[data-zeroclipboard-copy-btn]';
-    var copyBtns = Array.prototype.slice.apply(this.getDOMNode().querySelectorAll(zeroclipboardElementsSelector));
+    var node = ReactDOM.findDOMNode(this);
+    var copyBtns = Array.prototype.slice.apply(node.querySelectorAll(zeroclipboardElementsSelector));
 
     if (isArraysContentEqual(copyBtns, this.clipboardClient.elements())) {
       // this.clipboardClient was already applied to these buttons, do nothing.

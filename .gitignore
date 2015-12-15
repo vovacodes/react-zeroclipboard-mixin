@@ -9,3 +9,6 @@ node_modules
 
 # IDE
 .idea
+
+
+bower_components
