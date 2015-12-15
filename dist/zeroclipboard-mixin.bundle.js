@@ -2,10 +2,10 @@
 /*!
  * ZeroClipboard
  * The ZeroClipboard library provides an easy way to copy text to the clipboard using an invisible Adobe Flash movie and a JavaScript interface.
- * Copyright (c) 2009-2014 Jon Rohan, James M. Greene
+ * Copyright (c) 2009-2015 Jon Rohan, James M. Greene
  * Licensed MIT
  * http://zeroclipboard.org/
- * v2.2.0
+ * v2.3.0-beta.1
  */
 (function(window, undefined) {
   "use strict";
@@ -273,6 +273,16 @@
     return jsDir + "ZeroClipboard.swf";
   };
   /**
+ * Is the client's operating system some version of Windows?
+ *
+ * @returns Boolean
+ * @private
+ */
+  var _isWindows = function() {
+    var isWindowsRegex = /win(dows|[\s]?(nt|me|ce|xp|vista|[\d]+))/i;
+    return !!_navigator && (isWindowsRegex.test(_navigator.appVersion || "") || isWindowsRegex.test(_navigator.platform || "") || (_navigator.userAgent || "").indexOf("Windows") !== -1);
+  };
+  /**
  * Keep track of if the page is framed (in an `iframe`). This can never change.
  * @private
  */
@@ -400,6 +410,7 @@
     flashLoadTimeout: 3e4,
     autoActivate: true,
     bubbleEvents: true,
+    fixLineEndings: true,
     containerId: "global-zeroclipboard-html-bridge",
     containerClass: "global-zeroclipboard-container",
     swfObjectId: "global-zeroclipboard-flash-bridge",
@@ -417,7 +428,7 @@
     if (typeof options === "object" && options !== null) {
       for (var prop in options) {
         if (_hasOwn.call(options, prop)) {
-          if (/^(?:forceHandCursor|title|zIndex|bubbleEvents)$/.test(prop)) {
+          if (/^(?:forceHandCursor|title|zIndex|bubbleEvents|fixLineEndings)$/.test(prop)) {
             _globalConfig[prop] = options[prop];
           } else if (_flashState.bridge == null) {
             if (prop === "containerId" || prop === "swfObjectId") {
@@ -448,7 +459,7 @@
   var _state = function() {
     _detectSandbox();
     return {
-      browser: _pick(_navigator, [ "userAgent", "platform", "appName" ]),
+      browser: _pick(_navigator, [ "userAgent", "platform", "appName", "appVersion" ]),
       flash: _omit(_flashState, [ "bridge" ]),
       zeroclipboard: {
         version: ZeroClipboard.version,
@@ -654,7 +665,7 @@
     }
     for (var dataFormat in dataObj) {
       if (typeof dataFormat === "string" && dataFormat && _hasOwn.call(dataObj, dataFormat) && typeof dataObj[dataFormat] === "string" && dataObj[dataFormat]) {
-        _clipData[dataFormat] = dataObj[dataFormat];
+        _clipData[dataFormat] = _fixLineEndings(dataObj[dataFormat]);
       }
     }
   };
@@ -1521,18 +1532,15 @@
       classNames = value.split(/\s+/);
     }
     if (element && element.nodeType === 1 && classNames.length > 0) {
-      if (element.classList) {
-        for (c = 0, cl = classNames.length; c < cl; c++) {
-          element.classList.add(classNames[c]);
+      className = (" " + (element.className || "") + " ").replace(/[\t\r\n\f]/g, " ");
+      for (c = 0, cl = classNames.length; c < cl; c++) {
+        if (className.indexOf(" " + classNames[c] + " ") === -1) {
+          className += classNames[c] + " ";
         }
-      } else if (element.hasOwnProperty("className")) {
-        className = " " + element.className + " ";
-        for (c = 0, cl = classNames.length; c < cl; c++) {
-          if (className.indexOf(" " + classNames[c] + " ") === -1) {
-            className += classNames[c] + " ";
-          }
-        }
-        element.className = className.replace(/^\s+|\s+$/g, "");
+      }
+      className = className.replace(/^\s+|\s+$/g, "");
+      if (className !== element.className) {
+        element.className = className;
       }
     }
     return element;
@@ -1549,16 +1557,15 @@
       classNames = value.split(/\s+/);
     }
     if (element && element.nodeType === 1 && classNames.length > 0) {
-      if (element.classList && element.classList.length > 0) {
-        for (c = 0, cl = classNames.length; c < cl; c++) {
-          element.classList.remove(classNames[c]);
-        }
-      } else if (element.className) {
-        className = (" " + element.className + " ").replace(/[\r\n\t]/g, " ");
+      if (element.className) {
+        className = (" " + element.className + " ").replace(/[\t\r\n\f]/g, " ");
         for (c = 0, cl = classNames.length; c < cl; c++) {
           className = className.replace(" " + classNames[c] + " ", " ");
         }
-        element.className = className.replace(/^\s+|\s+$/g, "");
+        className = className.replace(/^\s+|\s+$/g, "");
+        if (className !== element.className) {
+          element.className = className;
+        }
       }
     }
     return element;
@@ -1627,6 +1634,9 @@
       return false;
     }
     var styles = _getComputedStyle(el, null);
+    if (!styles) {
+      return false;
+    }
     var hasCssHeight = _parseFloat(styles.height) > 0;
     var hasCssWidth = _parseFloat(styles.width) > 0;
     var hasCssTop = _parseFloat(styles.top) >= 0;
@@ -1701,6 +1711,25 @@
     return typeof zIndex === "number" ? zIndex : "auto";
   };
   /**
+ * Ensure OS-compliant line endings, i.e. "\r\n" on Windows, "\n" elsewhere
+ *
+ * @returns string
+ * @private
+ */
+  var _fixLineEndings = function(content) {
+    var replaceRegex = /(\r\n|\r|\n)/g;
+    if (typeof content === "string" && _globalConfig.fixLineEndings === true) {
+      if (_isWindows()) {
+        if (/((^|[^\r])\n|\r([^\n]|$))/.test(content)) {
+          content = content.replace(replaceRegex, "\r\n");
+        }
+      } else if (/\r/.test(content)) {
+        content = content.replace(replaceRegex, "\n");
+      }
+    }
+    return content;
+  };
+  /**
  * Attempt to detect if ZeroClipboard is executing inside of a sandboxed iframe.
  * If it is, Flash Player cannot be used, so ZeroClipboard is dead in the water.
  *
@@ -1708,7 +1737,7 @@
  * @see {@link https://github.com/zeroclipboard/zeroclipboard/issues/511}
  * @see {@link http://zeroclipboard.org/test-iframes.html}
  *
- * @returns `true` (is sandboxed), `false` (is not sandboxed), or `null` (uncertain) 
+ * @returns `true` (is sandboxed), `false` (is not sandboxed), or `null` (uncertain)
  * @private
  */
   var _detectSandbox = function(doNotReassessFlashSupport) {
@@ -1854,7 +1883,7 @@
  * @property {string}
  */
   _defineProperty(ZeroClipboard, "version", {
-    value: "2.2.0",
+    value: "2.3.0-beta.1",
     writable: false,
     configurable: true,
     enumerable: true
@@ -2590,11 +2619,13 @@ var ZeroClipboardMixin = {
   componentDidMount: function componentDidMount() {
     var zeroclipboardElementsSelector = this.zeroclipboardElementsSelector || '[data-zeroclipboard-copy-btn]';
     this.clipboardClient = new ZeroClipboard();
-    this.clipboardClient.clip(this.getDOMNode().querySelectorAll(zeroclipboardElementsSelector));
+    var node = ReactDOM.findDOMNode(this);
+    this.clipboardClient.clip(node.querySelectorAll(zeroclipboardElementsSelector));
   },
   componentDidUpdate: function componentDidUpdate() {
     var zeroclipboardElementsSelector = this.zeroclipboardElementsSelector || '[data-zeroclipboard-copy-btn]';
-    var copyBtns = Array.prototype.slice.apply(this.getDOMNode().querySelectorAll(zeroclipboardElementsSelector));
+    var node = ReactDOM.findDOMNode(this);
+    var copyBtns = Array.prototype.slice.apply(node.querySelectorAll(zeroclipboardElementsSelector));
 
     if (isArraysContentEqual(copyBtns, this.clipboardClient.elements())) {
       // this.clipboardClient was already applied to these buttons, do nothing.
